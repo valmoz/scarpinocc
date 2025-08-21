@@ -13,80 +13,80 @@ class DayTimeEdge implements EdgeInterface
     public $day;
 
     /**
-     * @var $time string
+     * @var $hour string
      */
-    public $time;
+    public $hour;
 
     public function before(Carbon $t)
     {
-        if ($this->day < $t->weekDay()) {
+        if ($this->day < $t->isoWeekday()) {
             return true;
         }
-        if ($this->day > $t->weekDay()) {
+        if ($this->day > $t->isoWeekday()) {
           return false;
         }
 
         $edgeTime = $this->getEdgeTime($t);
-        return $edgeTime->lt($this->time);
+        return $edgeTime->lt($t);
     }
 
     public function after(Carbon $t)
     {
-        if ($this->day > $t->weekDay()) {
+        if ($this->day > $t->isoWeekday()) {
             return true;
         }
-        if ($this->day < $t->weekDay()) {
+        if ($this->day < $t->isoWeekday()) {
             return false;
         }
 
         $edgeTime = $this->getEdgeTime($t);
-        return $edgeTime->gt($this->time);
+        return $edgeTime->gt($t);
     }
 
     public function equals(Carbon $t)
     {
-        if ($this->day !== $t->weekDay()) {
+        if ($this->day !== $t->isoWeekday()) {
             return false;
         }
 
         $edgeTime = $this->getEdgeTime($t);
-        return $edgeTime->eq($this->time);
+        return $edgeTime->eq($t);
     }
 
     public function beforeOrEquals(Carbon $t)
     {
-        if ($this->day < $t->weekDay()) {
+        if ($this->day < $t->isoWeekday()) {
             return true;
         }
-        if ($this->day > $t->weekDay()) {
+        if ($this->day > $t->isoWeekday()) {
             return false;
         }
 
         $edgeTime = $this->getEdgeTime($t);
-        return $edgeTime->lte($this->time);
+        return $edgeTime->lte($t);
     }
 
     public function afterOrEquals(Carbon $t)
     {
-        if ($this->day > $t->weekDay()) {
+        if ($this->day > $t->isoWeekday()) {
             return true;
         }
-        if ($this->day < $t->weekDay()) {
+        if ($this->day < $t->isoWeekday()) {
             return false;
         }
 
         $edgeTime = $this->getEdgeTime($t);
-        return $edgeTime->gte($this->time);
+        return $edgeTime->gte($t);
     }
 
-    private function getEdgeTime($t)
+    private function getEdgeTime(Carbon $t)
     {
-        if ($this->day !=  $t->weekDay()) {
+        if ($this->day !=  $t->isoWeekday()) {
             throw new \Exception("different day from edge");
         }
-        $str = explode(':', $this->time);
+        $str = explode(':', $this->hour);
         $hour = (int)$str[0];
         $minute = (int)$str[1];
-        return Carbon::create($t->year, $t->month, $t->day, $hour, $minute, 0);
+        return Carbon::create($t->year, $t->month, $t->day, $hour, $minute, 0, $t->tz);
     }
 }

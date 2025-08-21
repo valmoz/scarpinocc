@@ -19,10 +19,10 @@ class WeeklyPeriod implements PeriodInterface
 
     public function contains(Carbon $t)
     {
-        if ($this->from->day < $this->to->day || ($this->from->day == $this->to->day && $this->from->time < $this->to->time)) {
+        if ($this->from->day < $this->to->day || ($this->from->day == $this->to->day && $this->from->hour < $this->to->hour)) {
             return $this->from->beforeOrEquals($t) && $this->to->afterOrEquals($t);
         }
-        if ($this->from->day > $this->to->day || ($this->from->day == $this->to->day && $this->from->time > $this->to->time)) {
+        if ($this->from->day > $this->to->day || ($this->from->day == $this->to->day && $this->from->hour > $this->to->hour)) {
             return $this->to->afterOrEquals($t) || $this->from->beforeOrEquals($t);
         }
         // in this case from and to are the same
