@@ -4,11 +4,21 @@ namespace Scarpinocc\Test\Periods\Weekly;
 
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
-use Scarpinocc\Periods\Once\TimestampEdge;
 use Scarpinocc\Periods\Weekly\DayTimeEdge;
 
 class DayTimeEdgeTest extends TestCase
 {
+
+    protected static $initialized = false;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        if (!self::$initialized) {
+            date_default_timezone_set('Europe/Rome');
+            self::$initialized = true;
+        }
+    }
     public function testDayTimeEdgeBefore()
     {
         $edge = new DayTimeEdge();
