@@ -29,11 +29,11 @@ class OncePeriodTest extends TestCase
         $period->from = $leftEdge;
         $period->to = $rightEdge;
 
-        $this->assertFalse($period->contains($past));
-        $this->assertTrue($period->contains($let));
-        $this->assertTrue($period->contains($t));
-        $this->assertTrue($period->contains($ret));
-        $this->assertFalse($period->contains($future));
+        $this->assertFalse($period->contains($past), "Expected period to not contain the past timestamp");
+        $this->assertTrue($period->contains($let), "Expected period to contain the from timestamp");
+        $this->assertTrue($period->contains($t), "Expected period to contain the contained timestamp");
+        $this->assertTrue($period->contains($ret), "Expected period to contain the to timestamp");
+        $this->assertFalse($period->contains($future), "Expected period to not contain the future timestamp");
     }
 
     public function testOncePeriodContainsNow()
@@ -53,16 +53,16 @@ class OncePeriodTest extends TestCase
         $period->from = $leftEdge;
         $period->to = $rightEdge;
 
-        $this->assertTrue($period->containsNow());
+        $this->assertTrue($period->containsNow(), "Expected period to contain the current timestamp");
 
         $leftEdge->timestamp = $p2;
         $rightEdge->timestamp = $p1;
 
-        $this->assertFalse($period->containsNow());
+        $this->assertFalse($period->containsNow(), "Expected past period to not contain the current timestamp");
 
         $leftEdge->timestamp = $f1;
         $rightEdge->timestamp = $f2;
 
-        $this->assertFalse($period->containsNow());
+        $this->assertFalse($period->containsNow(), "Expected future period to not contain the current timestamp");
     }
 }

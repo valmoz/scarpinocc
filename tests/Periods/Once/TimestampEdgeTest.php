@@ -18,9 +18,9 @@ class TimestampEdgeTest extends TestCase
         $edge = new TimestampEdge();
         $edge->timestamp = $t;
 
-        $this->assertFalse($edge->before($past));
-        $this->assertFalse($edge->before($t));
-        $this->assertTrue($edge->before($future));
+        $this->assertFalse($edge->before($past), "Expected edge to not be before the past timestamp");
+        $this->assertFalse($edge->before($t), "Expected edge to not be before the same timestamp");
+        $this->assertTrue($edge->before($future), "Expected edge to be before the future timestamp");
     }
 
     public function testTimestampEdgeAfter()
@@ -32,9 +32,9 @@ class TimestampEdgeTest extends TestCase
         $edge = new TimestampEdge();
         $edge->timestamp = $t;
 
-        $this->assertTrue($edge->after($past));
-        $this->assertFalse($edge->after($t));
-        $this->assertFalse($edge->after($future));
+        $this->assertTrue($edge->after($past), "Expected edge to be after the past timestamp");
+        $this->assertFalse($edge->after($t), "Expected edge to not be after the same timestamp");
+        $this->assertFalse($edge->after($future), "Expected edge to not be after the future timestamp");
     }
 
     public function testTimestampEdgeEquals()
@@ -46,9 +46,9 @@ class TimestampEdgeTest extends TestCase
         $edge = new TimestampEdge();
         $edge->timestamp = $t;
 
-        $this->assertFalse($edge->equals($past));
-        $this->assertTrue($edge->equals($t));
-        $this->assertFalse($edge->equals($future));
+        $this->assertFalse($edge->equals($past), "Expected edge not to be equal the past timestamp");
+        $this->assertTrue($edge->equals($t), "Expected edge to be equal the same timestamp");
+        $this->assertFalse($edge->equals($future), "Expected edge to not be equal the future timestamp");
     }
 
     public function testTimestampEdgeBeforeOrEquals()
@@ -60,9 +60,9 @@ class TimestampEdgeTest extends TestCase
         $edge = new TimestampEdge();
         $edge->timestamp = $t;
 
-        $this->assertFalse($edge->beforeOrEquals($past));
-        $this->assertTrue($edge->beforeOrEquals($t));
-        $this->assertTrue($edge->beforeOrEquals($future));
+        $this->assertFalse($edge->beforeOrEquals($past), "Expected edge to not be before or equal the past timestamp");
+        $this->assertTrue($edge->beforeOrEquals($t), "Expected edge to not be before or equal the same timestamp");
+        $this->assertTrue($edge->beforeOrEquals($future), "Expected edge to be before or equal the future timestamp");
     }
 
     public function testTimestampEdgeAfterOrEquals()
@@ -74,8 +74,8 @@ class TimestampEdgeTest extends TestCase
         $edge = new TimestampEdge();
         $edge->timestamp = $t;
 
-        $this->assertTrue($edge->afterOrEquals($past));
-        $this->assertTrue($edge->afterOrEquals($t));
-        $this->assertFalse($edge->afterOrEquals($future));
+        $this->assertTrue($edge->afterOrEquals($past), "Expected edge to be after or equal the past timestamp");
+        $this->assertTrue($edge->afterOrEquals($t), "Expected edge to be after or equal the same timestamp");
+        $this->assertFalse($edge->afterOrEquals($future), "Expected edge to not be after or equal the future timestamp");
     }
 }
