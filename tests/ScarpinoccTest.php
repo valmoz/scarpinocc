@@ -8,6 +8,9 @@ use Scarpinocc\Scarpinocc;
 use Scarpinocc\Periods\PeriodInterface;
 use Scarpinocc\Periods\Weekly\WeeklyPeriod;
 use Scarpinocc\Periods\Once\OncePeriod;
+use Scarpinocc\Periods\Always\AlwaysPeriod;
+use Scarpinocc\Periods\Never\NeverPeriod;
+use Scarpinocc\Periods\Daily\DailyPeriod;
 
 class ScarpinoccTest extends TestCase
 {
@@ -40,6 +43,17 @@ class ScarpinoccTest extends TestCase
          }
       },
       {
+         "name":"business hours",
+         "description":"daily working hours",
+         "type":"daily",
+         "from":{
+            "hour":"09:00"
+         },
+         "to":{
+            "hour":"17:00"
+         }
+      },
+      {
          "name":"service interruption",
          "description":"as defined in mail 18/02/2025",
          "type":"once",
@@ -49,12 +63,24 @@ class ScarpinoccTest extends TestCase
          "to":{
             "timestamp":"2025-02-20 14:30:00"
          }
+      },
+      {
+         "name":"unlimited access",
+         "description":"always available",
+         "type":"always"
+      },
+      {
+         "name":"system down",
+         "description":"never available",
+         "type":"never"
       }
    ]
 }';
 
+        $m = json_decode($exampleJson, true);
+
         $scarpinocc = Scarpinocc::fromJson($exampleJson);
-        $this->assertEquals(2, count($scarpinocc->periods), "Expected 2 periods to be unmarshalled");
+        $this->assertEquals(count($m['periods']), count($scarpinocc->periods), "Expected correct number of periods to be unmarshalled");
 
         // Test weekly period
         $weeklyPeriod = $scarpinocc->periods[0];
@@ -64,13 +90,27 @@ class ScarpinoccTest extends TestCase
         $this->assertEquals(7, $weeklyPeriod->to->day, "Expected Sunday (7)");
         $this->assertEquals("07:00", $weeklyPeriod->to->hour);
 
+        // Test daily period
+        $dailyPeriod = $scarpinocc->periods[1];
+        $this->assertInstanceOf(DailyPeriod::class, $dailyPeriod);
+        $this->assertEquals("09:00", $dailyPeriod->from->hour);
+        $this->assertEquals("17:00", $dailyPeriod->to->hour);
+
         // Test once period
-        $oncePeriod = $scarpinocc->periods[1];
+        $oncePeriod = $scarpinocc->periods[2];
         $this->assertInstanceOf(OncePeriod::class, $oncePeriod);
         $expectedFrom = Carbon::parse("2025-02-20 12:30:00");
         $expectedTo = Carbon::parse("2025-02-20 14:30:00");
         $this->assertTrue($oncePeriod->from->timestamp->equalTo($expectedFrom));
         $this->assertTrue($oncePeriod->to->timestamp->equalTo($expectedTo));
+
+        // Test always period
+        $alwaysPeriod = $scarpinocc->periods[3];
+        $this->assertInstanceOf(AlwaysPeriod::class, $alwaysPeriod);
+
+        // Test never period
+        $neverPeriod = $scarpinocc->periods[4];
+        $this->assertInstanceOf(NeverPeriod::class, $neverPeriod);
     }
 
     public function testContains()

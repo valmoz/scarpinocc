@@ -8,6 +8,10 @@ use Scarpinocc\Periods\PeriodInterface;
 use Scarpinocc\Periods\Weekly\DayTimeEdge;
 use Scarpinocc\Periods\Weekly\WeeklyPeriod;
 use Scarpinocc\Periods\Once\OncePeriod;
+use Scarpinocc\Periods\Always\AlwaysPeriod;
+use Scarpinocc\Periods\Never\NeverPeriod;
+use Scarpinocc\Periods\Daily\DailyPeriod;
+use Scarpinocc\Periods\Daily\TimeEdge;
 
 class Scarpinocc 
 {
@@ -55,6 +59,21 @@ class Scarpinocc
                     $periods[] = $period;
                     break;
                     
+                case 'daily':
+                    $period = new DailyPeriod();
+                    if (isset($periodData['from'])) {
+                        $from = new TimeEdge();
+                        $from->hour = $periodData['from']['hour'] ?? '00:00';
+                        $period->from = $from;
+                    }
+                    if (isset($periodData['to'])) {
+                        $to = new TimeEdge();
+                        $to->hour = $periodData['to']['hour'] ?? '23:59';
+                        $period->to = $to;
+                    }
+                    $periods[] = $period;
+                    break;
+                    
                 case 'once':
                     $period = new OncePeriod();
                     if (isset($periodData['from'])) {
@@ -67,6 +86,16 @@ class Scarpinocc
                         $to->timestamp = Carbon::parse($periodData['to']['timestamp']) ?? Carbon::now();
                         $period->to = $to;
                     }
+                    $periods[] = $period;
+                    break;
+                    
+                case 'always':
+                    $period = new AlwaysPeriod();
+                    $periods[] = $period;
+                    break;
+                    
+                case 'never':
+                    $period = new NeverPeriod();
                     $periods[] = $period;
                     break;
                     
@@ -156,7 +185,7 @@ class Scarpinocc
         if (!$this->periods) {
             return false;
         }
-
+        
         foreach ($this->periods as $period) {
             if ($period->containsNow()) {
                 return true;
