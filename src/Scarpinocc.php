@@ -21,8 +21,25 @@ class Scarpinocc
     public $periods = [];
 
     /**
-     * Create Scarpinocc from JSON data
-     * 
+     * Create Scarpinocc from JSON data object
+     *
+     * @param array $data Decoded JSON data
+     * @return self
+     * @throws \InvalidArgumentException
+     */
+    public static function fromObject(array $data)
+    {
+
+        if (!isset($data['periods']) || !is_array($data['periods'])) {
+            throw new \InvalidArgumentException('periods field is required and must be an array');
+        }
+
+        return self::fromArray($data['periods']);
+    }
+
+    /**
+     * Create Scarpinocc from JSON periods array
+     *
      * @param array $data Decoded JSON data
      * @return self
      * @throws \InvalidArgumentException
@@ -30,13 +47,9 @@ class Scarpinocc
     public static function fromArray(array $data)
     {
         $scarpinocc = new self();
-        
-        if (!isset($data['periods']) || !is_array($data['periods'])) {
-            throw new \InvalidArgumentException('periods field is required and must be an array');
-        }
 
         $periods = [];
-        foreach ($data['periods'] as $periodData) {
+        foreach ($data as $periodData) {
             if (!isset($periodData['type'])) {
                 throw new \InvalidArgumentException('period type is required');
             }
@@ -58,7 +71,7 @@ class Scarpinocc
                     }
                     $periods[] = $period;
                     break;
-                    
+
                 case 'daily':
                     $period = new DailyPeriod();
                     if (isset($periodData['from'])) {
@@ -73,7 +86,7 @@ class Scarpinocc
                     }
                     $periods[] = $period;
                     break;
-                    
+
                 case 'once':
                     $period = new OncePeriod();
                     if (isset($periodData['from'])) {
@@ -88,17 +101,17 @@ class Scarpinocc
                     }
                     $periods[] = $period;
                     break;
-                    
+
                 case 'always':
                     $period = new AlwaysPeriod();
                     $periods[] = $period;
                     break;
-                    
+
                 case 'never':
                     $period = new NeverPeriod();
                     $periods[] = $period;
                     break;
-                    
+
                 default:
                     throw new \InvalidArgumentException("Unknown period type: {$periodData['type']}");
             }
